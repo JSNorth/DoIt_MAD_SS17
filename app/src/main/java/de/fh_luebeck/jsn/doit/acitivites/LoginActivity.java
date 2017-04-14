@@ -17,8 +17,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import de.fh_luebeck.jsn.doit.acitivites.OverviewActivity;
+import de.fh_luebeck.jsn.doit.util.AppConstants;
 
-import static de.fh_luebeck.jsn.doit.AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE;
+import static de.fh_luebeck.jsn.doit.util.AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE;
 
 public class LoginActivity extends AppCompatActivity {
 

@@ -11,6 +11,7 @@ import android.view.View;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
+import de.fh_luebeck.jsn.doit.asyncTasks.TodoSynchronisationTask;
 
 public class OverviewActivity extends AppCompatActivity {
 
@@ -18,6 +19,8 @@ public class OverviewActivity extends AppCompatActivity {
 
     @InjectView(R.id.toolbar)
     private Toolbar _toolbar;
+
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,9 +28,14 @@ public class OverviewActivity extends AppCompatActivity {
 
         setSupportActionBar(_toolbar);
 
+        // Intent auswerten
         Intent intent = getIntent();
         isWebAppReachable = intent.getBooleanExtra(AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE, false); // False als Default, dann kommt es nicht zu Problemen
 
+        // Datenabgleich mit der Web-App
+        if(isWebAppReachable){
+            new TodoSynchronisationTask().execute();
+        }
     }
 
     @OnClick(R.id.fab)
