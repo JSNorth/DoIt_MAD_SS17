@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">DoIt</string>
     <string name="title_activity_overview">OverviewActivity</string>
+    <string name="title_activity_to_do">ToDoActivity</string>
 </resources>

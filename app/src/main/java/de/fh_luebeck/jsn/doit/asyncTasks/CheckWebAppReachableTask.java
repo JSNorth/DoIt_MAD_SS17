@@ -18,12 +18,13 @@ import static de.fh_luebeck.jsn.doit.util.AppConstants.INTENT_EXTRA_WEB_APP_AVAI
  * Created by USER on 14.04.2017.
  */
 
-class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {
+public class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {
 
     private Activity activity;
     private ProgressDialog progressDialog;
+    private final static String TAG = CheckWebAppReachableTask.class.getName();
 
-    CheckWebAppReachableTask(Activity caller) {
+    public CheckWebAppReachableTask(Activity caller) {
         this.activity = caller;
         this.progressDialog = new ProgressDialog(activity);
     }
@@ -32,7 +33,7 @@ class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
 
         try {
-            InetAddress.getByName(AppConstants.WEB_APP_URL).isReachable(3000);
+            InetAddress.getByName("www.google.de").isReachable(3000);
             return true; // No Exception -> Reachable
         } catch (Exception e) {
             Log.i(TAG, "Connection to webapp no existing", e);
@@ -60,7 +61,7 @@ class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {
             // Direkter Wechsel in die Übersicht
             Intent intent = new Intent(activity, OverviewActivity.class);
             intent.putExtra(INTENT_EXTRA_WEB_APP_AVAILABLE, false);
-            startActivity(intent);
+            activity.startActivity(intent);
         }
     }
 }

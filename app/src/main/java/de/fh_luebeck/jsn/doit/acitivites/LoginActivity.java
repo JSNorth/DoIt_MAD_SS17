@@ -1,26 +1,17 @@
-package de.fh_luebeck.jsn.doit;
+package de.fh_luebeck.jsn.doit.acitivites;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import java.net.InetAddress;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import de.fh_luebeck.jsn.doit.acitivites.OverviewActivity;
-import de.fh_luebeck.jsn.doit.util.AppConstants;
-
-import static de.fh_luebeck.jsn.doit.util.AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE;
+import de.fh_luebeck.jsn.doit.R;
+import de.fh_luebeck.jsn.doit.asyncTasks.CheckWebAppReachableTask;
+import de.fh_luebeck.jsn.doit.asyncTasks.LoginTask;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -107,106 +98,5 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return valid;
-    }
-
-    class LoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private Activity activity;
-        private ProgressDialog progressDialog;
-
-        private String eMail;
-        private String password;
-
-        LoginTask(Activity caller, String eMail, String password) {
-            this.activity = caller;
-            this.progressDialog = new ProgressDialog(activity);
-
-            this.eMail = eMail;
-            this.password = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            // TODO jsn: Server aufruf
-
-            // TODO Produktion: entfernen
-            if (eMail.equals("test@admin.de") && password.equals("123456")) {
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            this.progressDialog.setMessage("Login ...");
-            this.progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
-            if (success) {
-                Toast.makeText(activity, "Login erfolgreich", Toast.LENGTH_LONG).show();
-
-                Intent intent = new Intent(activity, OverviewActivity.class);
-                intent.putExtra(INTENT_EXTRA_WEB_APP_AVAILABLE, true);
-                startActivity(intent);
-            } else {
-                Toast.makeText(activity, "Login nicht vorhanden", Toast.LENGTH_LONG).show();
-                // TODO jsn: Permanenter Fehler
-            }
-        }
-    }
-
-    class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {
-
-        private Activity activity;
-        private ProgressDialog progressDialog;
-
-        CheckWebAppReachableTask(Activity caller) {
-            this.activity = caller;
-            this.progressDialog = new ProgressDialog(activity);
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            try {
-                InetAddress.getByName(AppConstants.WEB_APP_URL).isReachable(3000);
-                return true; // No Exception -> Reachable
-            } catch (Exception e) {
-                Log.i(TAG, "Connection to webapp no existing", e);
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            this.progressDialog.setMessage("Prüfe Verbindung...");
-            this.progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
-            if (success) {
-                Toast.makeText(activity, "Verbindung vorhanden, bitte anmelden", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(activity, "Verbindung nicht vorhanden", Toast.LENGTH_LONG).show();
-
-                // Direkter Wechsel in die Übersicht
-                Intent intent = new Intent(activity, OverviewActivity.class);
-                intent.putExtra(INTENT_EXTRA_WEB_APP_AVAILABLE, false);
-                startActivity(intent);
-            }
-        }
     }
 }
