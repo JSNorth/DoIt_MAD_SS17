@@ -60,9 +60,6 @@
                     android:inputType="textMultiLine" />
             </android.support.design.widget.TextInputLayout>
 
-            <!-- Done (nur edit)-->
-            <!-- TODO -->
-
             <!-- Favourite -->
             <CheckBox
                 android:id="@+id/input_todo_favorite"
@@ -72,6 +69,16 @@
                 android:layout_marginTop="8dp"
                 android:checked="false"
                 android:text="Wichtiges ToDo" />
+
+            <CheckBox
+                android:id="@+id/input_todo_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:checked="false"
+                android:text="Erledigt"
+                android:visibility="gone" />
 
             <!-- Fälligkeitsdatum -->
             <android.support.design.widget.TextInputLayout
@@ -85,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Fälligkeitsdatum"
-                    android:inputType="date" />
+                    android:inputType="datetime" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- Button zum Speichern -->

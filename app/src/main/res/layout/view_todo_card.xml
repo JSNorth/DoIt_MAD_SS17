@@ -23,7 +23,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:padding="4dp"
-                android:textSize="30sp" />
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="30sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/todo_description"
@@ -32,38 +35,54 @@
                 android:layout_below="@id/todo_name"
                 android:padding="4dp" />
 
-            <TextView
-                android:id="@+id/todo_duedate"
+            <LinearLayout
+                android:id="@+id/duedate_wrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/todo_description"
-                android:padding="4dp" />
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/todo_edit"
+                <TextView
+                    android:id="@+id/todo_duedate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp" />
+
+                <ImageView
+                    android:id="@+id/todo_overdue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_priority_high_black_24dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:src="@android:drawable/ic_menu_edit" />
+                android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/todo_done"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/todo_edit"
-                android:enabled="true"
-                android:text="Abgehakt" />
+                <ImageButton
+                    android:id="@+id/todo_edit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_edit_black_24dp" />
 
-            <CheckBox
-                android:id="@+id/todo_favourite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/todo_done"
-                android:enabled="true"
-                android:text="Wichtig" />
+                <CheckBox
+                    android:id="@+id/todo_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="true"
+                    android:text="Abgehakt" />
+
+                <CheckBox
+                    android:id="@+id/todo_favourite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="true"
+                    android:text="Wichtig" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/todo_id"

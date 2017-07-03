@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import de.fh_luebeck.jsn.doit.R;
@@ -40,6 +42,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         public CheckBox _todoDone;
         public CheckBox _todoFavourite;
         public ImageButton _todoEdit;
+        public ImageView _todoOverdue;
 
         public ViewHolder(View v) {
             super(v);
@@ -50,6 +53,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
             _todoDone = (CheckBox) v.findViewById(R.id.todo_done);
             _todoFavourite = (CheckBox) v.findViewById(R.id.todo_favourite);
             _todoEdit = (ImageButton) v.findViewById(R.id.todo_edit);
+            _todoOverdue = (ImageView) v.findViewById(R.id.todo_overdue);
         }
     }
 
@@ -82,6 +86,10 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         holder._todoDueDateView.setText(DateUtils.getRelativeTimeSpanString(toDoList.get(position).getExpiry().getTime()));
         holder._todoDone.setChecked(toDoList.get(position).getDone());
         holder._todoFavourite.setChecked(toDoList.get(position).getFavourite());
+
+        if (toDoList.get(position).getDone() == false && toDoList.get(position).getExpiry().before(new Date())) {
+            holder._todoOverdue.setVisibility(View.VISIBLE);
+        }
 
         holder._todoEdit.setOnClickListener(new View.OnClickListener() {
             @Override
