@@ -7,7 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -16,6 +20,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
 import de.fh_luebeck.jsn.doit.asyncTasks.TodoSynchronisationTask;
+import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.interfaces.ToDoListEventHandler;
@@ -73,7 +78,6 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
     @OnClick(R.id.add_todo)
     public void createNewTodo() {
         Intent intent = new Intent(this, ToDoActivity.class);
-        // TODO jsn: Umbauen auf startAcitivityForResult
         startActivityForResult(intent, 2);
     }
 
@@ -91,13 +95,28 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
 
     @Override
     public void handleFavoriteClick(long toDoId) {
-        // TODO Persistierung
+        ToDo task = ToDo.findById(ToDo.class, toDoId);
+
+        task.setFavourite(!task.getFavourite());
+
+        if (task == null) {
+            Toast.makeText(this, "Fehler ToDo konnte nicht gefunden werden", Toast.LENGTH_LONG);
+        }
+
+        new UpdateToDoTask(task).execute();
     }
 
     @Override
     public void handleDoneClick(long toDoId) {
-        // TODO Persistierung
+        ToDo task = ToDo.findById(ToDo.class, toDoId);
 
+        task.setDone(!task.getDone());
+
+        if (task == null) {
+            Toast.makeText(this, "Fehler ToDo konnte nicht gefunden werden", Toast.LENGTH_LONG);
+        }
+
+        new UpdateToDoTask(task).execute();
     }
 
     @Override
@@ -108,5 +127,24 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
                 updateToDos();
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.overview_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.change_order:
+                _adapter.changeSortMode();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.fh_luebeck.jsn.doit.R;
@@ -26,6 +28,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     private ToDoListEventHandler _caller;
     private List<ToDo> toDoList;
     private static String _tag = ToDoAdapter.class.getSimpleName();
+    private SortMode sortMode;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
@@ -53,6 +56,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     public ToDoAdapter(ToDoListEventHandler caller, List<ToDo> toDoList) {
         this.toDoList = toDoList;
         this._caller = caller;
+        this.sortMode = SortMode.FAVORITE_DATE;
+        sort();
     }
 
     // Create new views (invoked by the layout manager)
@@ -109,6 +114,86 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     public void updateData(List<ToDo> freshSet) {
         this.toDoList.clear();
         this.toDoList.addAll(freshSet);
+        sort();
         notifyDataSetChanged();
+    }
+
+    public void changeSortMode() {
+        if (sortMode.equals(SortMode.FAVORITE_DATE)) {
+            sortMode = SortMode.DATE_FAVORITE;
+        } else {
+            sortMode = SortMode.FAVORITE_DATE;
+        }
+
+        sort();
+        notifyDataSetChanged();
+    }
+
+    private void sort() {
+        Collections.sort(toDoList, new ToDoComperator());
+    }
+
+    public enum SortMode {
+        FAVORITE_DATE,
+        DATE_FAVORITE
+    }
+
+    private class ToDoComperator implements Comparator<ToDo> {
+
+        private final int O1_HIGHER_O2 = -1;
+        private final int O2_HIGHER_O1 = 1;
+        private final int O1_EQUAL_O2 = 0;
+
+
+        @Override
+        public int compare(ToDo o1, ToDo o2) {
+
+            // Erledigte ToDos unter nicht erledigten
+            if (o1.getDone() == true && o2.getDone() == false) {
+                return O2_HIGHER_O1;
+            }
+            if (o1.getDone() == false && o2.getDone() == true) {
+                return O1_HIGHER_O2;
+            }
+
+            // Beide ToDos erledigt oder nicht erledigt; Anwendung des Sort-Mode
+            switch (sortMode) {
+                case DATE_FAVORITE:
+                    if (o1.getExpiry().before(o2.getExpiry())) {
+                        return O1_HIGHER_O2;
+                    } else if (o1.getExpiry().equals(o2.getExpiry())) {
+                        // Favorit
+                        if (o1.getFavourite() == o2.getFavourite()) {
+                            return O1_EQUAL_O2;
+                        } else if (o1.getFavourite() == true) {
+                            return O1_HIGHER_O2;
+                        } else {
+                            return O2_HIGHER_O1;
+                        }
+                    } else {
+                        return O2_HIGHER_O1;
+                    }
+                case FAVORITE_DATE:
+                    if (o1.getFavourite() != o2.getFavourite()) {
+                        if (o1.getFavourite()) {
+                            return O1_HIGHER_O2;
+                        } else {
+                            return O2_HIGHER_O1;
+                        }
+                    } else {
+                        if (o1.getExpiry().equals(o2.getExpiry())) {
+                            return O1_EQUAL_O2;
+                        } else {
+                            if (o1.getExpiry().before(o2.getExpiry())) {
+                                return O1_HIGHER_O2;
+                            } else {
+                                return O2_HIGHER_O1;
+                            }
+                        }
+                    }
+            }
+
+            return 0;
+        }
     }
 }

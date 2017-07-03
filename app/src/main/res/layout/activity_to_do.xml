@@ -98,6 +98,18 @@
                 android:padding="12dp"
                 android:text="Speichern" />
 
+            <!-- Button zum Löschen -->
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_delete_todo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/colorPrimaryDark"
+                android:padding="12dp"
+                android:text="Löschen"
+                android:visibility="invisible" />
+
             <!-- Invisible input for ID (edit) -->
             <TextView
                 android:id="@+id/todo_id"

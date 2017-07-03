@@ -3,7 +3,9 @@ package de.fh_luebeck.jsn.doit.acitivites;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,7 +20,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
+import de.fh_luebeck.jsn.doit.asyncTasks.DeleteToDoTask;
 import de.fh_luebeck.jsn.doit.asyncTasks.ToDoCreateTask;
+import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.fragments.DatePicker;
 
@@ -45,6 +49,9 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
     @InjectView(R.id.todo_id)
     TextView _id;
 
+    @InjectView(R.id.btn_delete_todo)
+    AppCompatButton _deleteButton;
+
     private SimpleDateFormat dateFormat;
     private ToDo _item = null;
 
@@ -64,18 +71,24 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
         _id.setText("-1");
 
         Long todoId = -1L;
-        if (getIntent() == null && getIntent().getExtras() == null) {
+        if (getIntent() != null && getIntent().getExtras() != null) {
             todoId = getIntent().getExtras().getLong("TODO_ID", -1);
         }
         if (todoId != -1L) {
             // Edit
             _item = ToDo.findById(ToDo.class, todoId);
 
+            if (_item == null) {
+                Toast.makeText(this, "Fehler ToDo konnte nicht gefunden werden", Toast.LENGTH_LONG);
+            }
+
             _dueDateText.setText(dateFormat.format(_item.getExpiry()));
             _descriptionText.setText(_item.getDescription());
             _nameText.setText(_item.getName());
             _favoriteBox.setChecked(_item.getFavourite());
             _id.setText(_item.getId().toString());
+
+            _deleteButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -95,8 +108,16 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             _item.setName(_nameText.getText().toString());
             _item.setFavourite(_favoriteBox.isChecked());
             _item.setExpiry(getDueDate().getTime());
+
+            new UpdateToDoTask(_item).execute();
         }
 
+        finish();
+    }
+
+    @OnClick(R.id.btn_delete_todo)
+    public void deleteTodo() {
+        new DeleteToDoTask(_item).execute();
         finish();
     }
 
