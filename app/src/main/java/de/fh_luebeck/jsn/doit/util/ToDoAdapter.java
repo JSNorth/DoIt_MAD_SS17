@@ -106,4 +106,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         return toDoList.size();
     }
 
+    public void updateData(List<ToDo> freshSet) {
+        this.toDoList.clear();
+        this.toDoList.addAll(freshSet);
+        notifyDataSetChanged();
+    }
 }

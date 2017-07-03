@@ -17,10 +17,10 @@
         <!-- Sugar ORM -->
         <meta-data
             android:name="DATABASE"
-            android:value="doit_local.db" />
+            android:value="doit_local01.db" />
         <meta-data
             android:name="VERSION"
-            android:value="2" />
+            android:value="1" />
         <meta-data
             android:name="QUERY_LOG"
             android:value="true" />

@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
+import de.fh_luebeck.jsn.doit.asyncTasks.ToDoCreateTask;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.fragments.DatePicker;
 
@@ -62,8 +63,11 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
         _dueDateText.setText(dateFormat.format(currentDate));
         _id.setText("-1");
 
-        Long todoId = getIntent().getExtras().getLong("TODO_ID", -1);
-        if (todoId != -1) {
+        Long todoId = -1L;
+        if (getIntent() == null && getIntent().getExtras() == null) {
+            todoId = getIntent().getExtras().getLong("TODO_ID", -1);
+        }
+        if (todoId != -1L) {
             // Edit
             _item = ToDo.findById(ToDo.class, todoId);
 
@@ -83,16 +87,15 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
         if (_item == null) {
             // Neues Objekt anlegen
             _item = new ToDo(_nameText.getText().toString(), _descriptionText.getText().toString(), false, _favoriteBox.isChecked(), getDueDate());
+
+            new ToDoCreateTask(_item).execute();
+
         } else {
             _item.setDescription(_descriptionText.getText().toString());
             _item.setName(_nameText.getText().toString());
             _item.setFavourite(_favoriteBox.isChecked());
             _item.setExpiry(getDueDate().getTime());
         }
-
-        _item.save();
-
-        Toast.makeText(this, "Speichern erfolgreich", Toast.LENGTH_LONG).show();
 
         finish();
     }

@@ -16,7 +16,6 @@ public class ToDo extends SugarRecord {
     Boolean done;
     Boolean favourite;
     long expiry;
-    List<String> contacts;
 
     public ToDo() {
     }

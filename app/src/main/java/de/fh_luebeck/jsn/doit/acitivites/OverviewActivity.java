@@ -17,14 +17,16 @@ import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
 import de.fh_luebeck.jsn.doit.asyncTasks.TodoSynchronisationTask;
 import de.fh_luebeck.jsn.doit.data.ToDo;
+import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.interfaces.ToDoListEventHandler;
+import de.fh_luebeck.jsn.doit.interfaces.ToDoPersistenceEvents;
 import de.fh_luebeck.jsn.doit.util.AppConstants;
 import de.fh_luebeck.jsn.doit.util.ToDoAdapter;
 
-public class OverviewActivity extends AppCompatActivity implements ToDoListEventHandler {
+public class OverviewActivity extends AppCompatActivity implements ToDoListEventHandler, ToDoPersistenceEvents {
 
     private boolean isWebAppReachable;
-    private RecyclerView.Adapter _adapter;
+    private ToDoAdapter _adapter;
     private RecyclerView.LayoutManager _layoutManager;
 
     @InjectView(R.id.toolbar)
@@ -46,6 +48,9 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
         Intent intent = getIntent();
         isWebAppReachable = intent.getBooleanExtra(AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE, false); // False als Default, dann kommt es nicht zu Problemen
 
+        // Event-Hanlder
+        EventHandler.registerForDataChangedSignal(this);
+
         // Datenabgleich mit der Web-App
         if (isWebAppReachable) {
             new TodoSynchronisationTask().execute();
@@ -58,6 +63,11 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
         List<ToDo> toDos = ToDo.listAll(ToDo.class);
         _adapter = new ToDoAdapter(this, toDos);
         _recyclerView.setAdapter(_adapter);
+    }
+
+    private void updateToDos() {
+        List<ToDo> toDos = ToDo.listAll(ToDo.class);
+        _adapter.updateData(toDos);
     }
 
     @OnClick(R.id.add_todo)
@@ -88,5 +98,15 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
     public void handleDoneClick(long toDoId) {
         // TODO Persistierung
 
+    }
+
+    @Override
+    public void dataChangedSignal() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateToDos();
+            }
+        });
     }
 }
