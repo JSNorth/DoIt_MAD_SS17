@@ -2,7 +2,6 @@ package de.fh_luebeck.jsn.doit.acitivites;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -23,12 +21,12 @@ import de.fh_luebeck.jsn.doit.asyncTasks.TodoSynchronisationTask;
 import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
-import de.fh_luebeck.jsn.doit.interfaces.ToDoListEventHandler;
-import de.fh_luebeck.jsn.doit.interfaces.ToDoPersistenceEvents;
+import de.fh_luebeck.jsn.doit.events.ToDoListEvents;
+import de.fh_luebeck.jsn.doit.events.ToDoPersistenceEvents;
 import de.fh_luebeck.jsn.doit.util.AppConstants;
-import de.fh_luebeck.jsn.doit.util.ToDoAdapter;
+import de.fh_luebeck.jsn.doit.adapter.ToDoAdapter;
 
-public class OverviewActivity extends AppCompatActivity implements ToDoListEventHandler, ToDoPersistenceEvents {
+public class OverviewActivity extends AppCompatActivity implements ToDoListEvents, ToDoPersistenceEvents {
 
     private boolean isWebAppReachable;
     private ToDoAdapter _adapter;

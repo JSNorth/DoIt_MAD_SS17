@@ -18,11 +18,11 @@ import retrofit2.Response;
 public class UpdateToDoTask extends AsyncTask<Void, Void, Void> {
 
     private ToDo task;
-    private List<AssociatedContact> associatedContacts;
+    private List<AssociatedContact> associatedContactDatas;
 
-    public UpdateToDoTask(ToDo task, List<AssociatedContact> associatedContacts) {
+    public UpdateToDoTask(ToDo task, List<AssociatedContact> associatedContactDatas) {
         this.task = task;
-        this.associatedContacts = associatedContacts;
+        this.associatedContactDatas = associatedContactDatas;
     }
 
     @Override
@@ -31,25 +31,25 @@ public class UpdateToDoTask extends AsyncTask<Void, Void, Void> {
         // Lokal speichern
 
         // Bei einem Update aus der Overview ist null erlaubt.
-        if (associatedContacts == null) {
-            associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
+        if (associatedContactDatas == null) {
+            associatedContactDatas = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
         }
 
         List<AssociatedContact> oldContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
         if (oldContacts != null) {
-            for (AssociatedContact associatedContact : oldContacts) {
-                associatedContact.delete();
+            for (AssociatedContact associatedContactData : oldContacts) {
+                associatedContactData.delete();
             }
         }
 
-        for (AssociatedContact associatedContact : associatedContacts) {
-            associatedContact.setTaskId(task.getId());
-            associatedContact.save();
+        for (AssociatedContact associatedContactData : associatedContactDatas) {
+            associatedContactData.setTaskId(task.getId());
+            associatedContactData.save();
         }
         task.save();
 
         try {
-            task.setContacts(associatedContacts);
+            task.setContacts(associatedContactDatas);
             Response resp = ToDoWebserviceFactory.getToDoWebserice().updateTodo(task.getId(), task).execute();
             if (resp.isSuccessful() == false) {
                 EventHandler.webServiceError(resp);

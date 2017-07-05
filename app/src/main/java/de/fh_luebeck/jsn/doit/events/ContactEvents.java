@@ -1,4 +1,4 @@
-package de.fh_luebeck.jsn.doit.interfaces;
+package de.fh_luebeck.jsn.doit.events;
 
 /**
  * Created by USER on 03.07.2017.

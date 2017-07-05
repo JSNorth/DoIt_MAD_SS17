@@ -3,7 +3,6 @@ package de.fh_luebeck.jsn.doit.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.fh_luebeck.jsn.doit.interfaces.ToDoPersistenceEvents;
 import retrofit2.Response;
 
 /**

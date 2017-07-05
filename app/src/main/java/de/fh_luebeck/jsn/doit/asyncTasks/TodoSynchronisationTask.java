@@ -3,8 +3,6 @@ package de.fh_luebeck.jsn.doit.asyncTasks;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
-import de.fh_luebeck.jsn.doit.util.ContactQuries;
+import de.fh_luebeck.jsn.doit.util.ContactQueries;
 import de.fh_luebeck.jsn.doit.webservice.ToDoWebserviceFactory;
 import retrofit2.Response;
 
@@ -47,8 +45,8 @@ public class TodoSynchronisationTask extends AsyncTask<Void, Void, Void> {
             for (ToDo toDo : ToDo.listAll(ToDo.class)) {
                 try {
 
-                    List<AssociatedContact> associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", toDo.getId().toString());
-                    toDo.setContacts(associatedContacts);
+                    List<AssociatedContact> associatedContactDatas = AssociatedContact.find(AssociatedContact.class, "task_id = ?", toDo.getId().toString());
+                    toDo.setContacts(associatedContactDatas);
                     Response resp = ToDoWebserviceFactory.getToDoWebserice().createTodo(toDo).execute();
                     if (resp.isSuccessful() != true) {
                         EventHandler.webServiceError(resp);
@@ -73,7 +71,7 @@ public class TodoSynchronisationTask extends AsyncTask<Void, Void, Void> {
                     toDo.save();
 
                     for (String uri : toDo.getContacts()) {
-                        new AssociatedContact(toDo.getId(), uri, ContactQuries.queryName(Uri.parse(uri), resolver), ContactQuries.queryPhone(Uri.parse(uri), resolver), ContactQuries.queryMail(Uri.parse(uri), resolver)).save();
+                        new AssociatedContact(toDo.getId(), uri, ContactQueries.queryName(Uri.parse(uri), resolver), ContactQueries.queryPhone(Uri.parse(uri), resolver), ContactQueries.queryMail(Uri.parse(uri), resolver)).save();
                     }
 
 

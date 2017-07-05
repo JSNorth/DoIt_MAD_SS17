@@ -1,4 +1,4 @@
-package de.fh_luebeck.jsn.doit.util;
+package de.fh_luebeck.jsn.doit.adapter;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.fh_luebeck.jsn.doit.R;
 import de.fh_luebeck.jsn.doit.data.ToDo;
-import de.fh_luebeck.jsn.doit.interfaces.ToDoListEventHandler;
+import de.fh_luebeck.jsn.doit.events.ToDoListEvents;
 
 /**
  * Created by USER on 14.04.2017.
@@ -27,7 +27,7 @@ import de.fh_luebeck.jsn.doit.interfaces.ToDoListEventHandler;
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
-    private ToDoListEventHandler _caller;
+    private ToDoListEvents _caller;
     private List<ToDo> toDoList;
     private static String _tag = ToDoAdapter.class.getSimpleName();
     private SortMode sortMode;
@@ -57,7 +57,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         }
     }
 
-    public ToDoAdapter(ToDoListEventHandler caller, List<ToDo> toDoList) {
+    public ToDoAdapter(ToDoListEvents caller, List<ToDo> toDoList) {
         this.toDoList = toDoList;
         this._caller = caller;
         this.sortMode = SortMode.FAVORITE_DATE;

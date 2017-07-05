@@ -4,15 +4,12 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.view.View;
-
-import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 
 /**
  * Created by USER on 05.07.2017.
  */
 
-public class ContactQuries {
+public class ContactQueries {
 
     public static String queryName(Uri uri, ContentResolver contentResolver) {
 

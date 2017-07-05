@@ -10,7 +10,6 @@ import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.webservice.ToDoWebserviceFactory;
 import retrofit2.Response;
-import retrofit2.http.DELETE;
 
 /**
  * Created by USER on 03.07.2017.
@@ -28,9 +27,9 @@ public class DeleteToDoTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
 
         // Lokal durchführen
-        List<AssociatedContact> associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
-        for (AssociatedContact associatedContact : associatedContacts) {
-            associatedContact.delete();
+        List<AssociatedContact> associatedContactDatas = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
+        for (AssociatedContact associatedContactData : associatedContactDatas) {
+            associatedContactData.delete();
         }
 
         task.delete();

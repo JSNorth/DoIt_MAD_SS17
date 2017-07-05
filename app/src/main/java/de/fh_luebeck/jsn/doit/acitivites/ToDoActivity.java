@@ -39,14 +39,14 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
 import de.fh_luebeck.jsn.doit.asyncTasks.DeleteToDoTask;
-import de.fh_luebeck.jsn.doit.asyncTasks.ToDoCreateTask;
+import de.fh_luebeck.jsn.doit.asyncTasks.CreateToDoTask;
 import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
 import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.fragments.DatePicker;
 import de.fh_luebeck.jsn.doit.fragments.TimePicker;
-import de.fh_luebeck.jsn.doit.interfaces.ContactEvents;
-import de.fh_luebeck.jsn.doit.util.ContactAdapter;
+import de.fh_luebeck.jsn.doit.events.ContactEvents;
+import de.fh_luebeck.jsn.doit.adapter.ContactAdapter;
 
 public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, ContactEvents {
 
@@ -81,7 +81,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
 
     private SimpleDateFormat dateFormat;
     private ToDo _item = null;
-    private List<AssociatedContact> associatedContacts;
+    private List<AssociatedContact> associatedContactDatas;
     private ContactAdapter contactAdapter;
 
     private int year;
@@ -127,17 +127,17 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             _doneBox.setChecked(_item.getDone());
 
             _doneBox.setVisibility(View.VISIBLE);
-            associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", _item.getId().toString());
+            associatedContactDatas = AssociatedContact.find(AssociatedContact.class, "task_id = ?", _item.getId().toString());
         }
 
-        if (associatedContacts == null) {
-            associatedContacts = new ArrayList<>();
+        if (associatedContactDatas == null) {
+            associatedContactDatas = new ArrayList<>();
         }
 
-        contactAdapter = new ContactAdapter(this, R.layout.associated_list_entry, associatedContacts, this);
+        contactAdapter = new ContactAdapter(this, R.layout.associated_list_entry, associatedContactDatas, this);
         _listView.setAdapter(contactAdapter);
 
-        if (associatedContacts.isEmpty()) {
+        if (associatedContactDatas.isEmpty()) {
             _noContacts.setVisibility(View.VISIBLE);
         }
 
@@ -151,7 +151,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             // Neues Objekt anlegen
             _item = new ToDo(_nameText.getText().toString(), _descriptionText.getText().toString(), false, _favoriteBox.isChecked(), getDueDate());
 
-            new ToDoCreateTask(_item, associatedContacts).execute();
+            new CreateToDoTask(_item, associatedContactDatas).execute();
 
         } else {
             _item.setDescription(_descriptionText.getText().toString());
@@ -159,7 +159,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             _item.setFavourite(_favoriteBox.isChecked());
             _item.setExpiry(getDueDate().getTime());
 
-            new UpdateToDoTask(_item, associatedContacts).execute();
+            new UpdateToDoTask(_item, associatedContactDatas).execute();
         }
 
         finish();
@@ -311,20 +311,20 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
         contact.seteMail(email);
         contact.setMobile(phoneNumer);
 
-        associatedContacts.add(contact);
+        associatedContactDatas.add(contact);
 
-        if (associatedContacts.isEmpty() == false) {
+        if (associatedContactDatas.isEmpty() == false) {
             _noContacts.setVisibility(View.GONE);
         }
 
-        contactAdapter.updateData(associatedContacts);
+        contactAdapter.updateData(associatedContactDatas);
     }
 
     @Override
     public void sendEMail(int position) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{associatedContacts.get(position).geteMail()});
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{associatedContactDatas.get(position).geteMail()});
         if (_item != null && _item.getName() != null) {
             intent.putExtra(Intent.EXTRA_SUBJECT, "Bezüglich: " + _item.getName());
         } else {
@@ -339,10 +339,10 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
 
     @Override
     public void removeContact(int position) {
-        associatedContacts.remove(position);
-        contactAdapter.updateData(associatedContacts);
+        associatedContactDatas.remove(position);
+        contactAdapter.updateData(associatedContactDatas);
 
-        if (associatedContacts.isEmpty()) {
+        if (associatedContactDatas.isEmpty()) {
             _noContacts.setVisibility(View.VISIBLE);
         }
     }
@@ -350,7 +350,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
     @Override
     public void sendMessage(int position) {
 
-        Uri uri = Uri.parse("smsto:" + associatedContacts.get(position).getMobile());
+        Uri uri = Uri.parse("smsto:" + associatedContactDatas.get(position).getMobile());
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
         if (_item != null && _item.getName() != null) {
             it.putExtra("sms_body", _item.getName());

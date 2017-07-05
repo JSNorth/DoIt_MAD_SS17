@@ -1,6 +1,5 @@
 package de.fh_luebeck.jsn.doit.webservice;
 
-import de.fh_luebeck.jsn.doit.interfaces.ToDoWebService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

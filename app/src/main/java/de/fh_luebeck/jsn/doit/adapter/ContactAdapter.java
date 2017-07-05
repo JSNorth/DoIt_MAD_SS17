@@ -1,7 +1,6 @@
-package de.fh_luebeck.jsn.doit.util;
+package de.fh_luebeck.jsn.doit.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import java.util.List;
 
 import de.fh_luebeck.jsn.doit.R;
 import de.fh_luebeck.jsn.doit.data.AssociatedContact;
-import de.fh_luebeck.jsn.doit.interfaces.ContactEvents;
+import de.fh_luebeck.jsn.doit.events.ContactEvents;
 
 /**
  * Created by USER on 03.07.2017.
@@ -26,11 +25,11 @@ public class ContactAdapter extends ArrayAdapter<AssociatedContact> {
     private final LayoutInflater inflater;
     private final ContactEvents eventHandler;
 
-    public ContactAdapter(Context context, int resource, List<AssociatedContact> associatedContacts, ContactEvents eventHandler) {
+    public ContactAdapter(Context context, int resource, List<AssociatedContact> associatedContactDatas, ContactEvents eventHandler) {
         super(context, resource);
 
         mContext = context;
-        mItems = associatedContacts;
+        mItems = associatedContactDatas;
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.eventHandler = eventHandler;
     }

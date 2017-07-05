@@ -75,8 +75,8 @@ public class ToDo extends SugarRecord {
     public void setContacts(List<AssociatedContact> contacts) {
         this.contacts = new ArrayList<>();
         if (contacts != null) {
-            for (AssociatedContact associatedContact : contacts) {
-                this.contacts.add(associatedContact.getContactUri());
+            for (AssociatedContact associatedContactData : contacts) {
+                this.contacts.add(associatedContactData.getContactUri());
             }
         }
     }

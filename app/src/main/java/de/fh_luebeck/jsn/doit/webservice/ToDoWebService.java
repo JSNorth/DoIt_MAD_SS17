@@ -1,4 +1,4 @@
-package de.fh_luebeck.jsn.doit.interfaces;
+package de.fh_luebeck.jsn.doit.webservice;
 
 import java.util.List;
 

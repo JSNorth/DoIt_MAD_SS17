@@ -1,4 +1,4 @@
-package de.fh_luebeck.jsn.doit.interfaces;
+package de.fh_luebeck.jsn.doit.webservice;
 
 import de.fh_luebeck.jsn.doit.data.User;
 import retrofit2.Call;

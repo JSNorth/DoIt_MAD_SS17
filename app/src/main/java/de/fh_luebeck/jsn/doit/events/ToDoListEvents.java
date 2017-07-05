@@ -1,10 +1,10 @@
-package de.fh_luebeck.jsn.doit.interfaces;
+package de.fh_luebeck.jsn.doit.events;
 
 /**
  * Created by USER on 01.07.2017.
  */
 
-public interface ToDoListEventHandler {
+public interface ToDoListEvents {
 
     void handleEditClick(long toDoId);
 
