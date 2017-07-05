@@ -2,20 +2,26 @@ package de.fh_luebeck.jsn.doit.acitivites;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import de.fh_luebeck.jsn.doit.R;
-import de.fh_luebeck.jsn.doit.asyncTasks.CheckWebAppReachableTask;
-import de.fh_luebeck.jsn.doit.asyncTasks.LoginTask;
+import de.fh_luebeck.jsn.doit.tasks.CheckWebAppReachableTask;
+import de.fh_luebeck.jsn.doit.tasks.LoginTask;
 
+/**
+ * Activity
+ * - Login
+ */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = AppCompatActivity.class.getName();
+    private static final String TAG = LoginActivity.class.getName();
 
     @InjectView(R.id.input_email)
     EditText _emailText;
@@ -23,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText _passwordText;
     @InjectView(R.id.btn_login)
     Button _loginButton;
+    @InjectView(R.id.login_error)
+    TextView _loginError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
 
-        // Check wether Server is reachable
+        // Check if Server is reachable
         new CheckWebAppReachableTask(this).execute();
 
         _loginButton.setEnabled(false);
@@ -44,15 +52,23 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void hideErrorMessage() {
+        if (_loginError.getVisibility() == View.VISIBLE) {
+            _loginError.setVisibility(View.GONE);
+        }
+    }
+
     @OnTextChanged(value = R.id.input_password, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void passwordUpdated() {
         enableLoginButtonIfFormSet();
+        hideErrorMessage();
         _passwordText.setError(null);
     }
 
     @OnTextChanged(value = R.id.input_email, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void eMailChanged() {
         enableLoginButtonIfFormSet();
+        hideErrorMessage();
         _emailText.setError(null);
     }
 
@@ -63,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (isFormValid()) {
             // Validierung über HTTP durchführen
-            new LoginTask(this, _emailText.getText().toString(), _passwordText.getText().toString()).execute();
+            new LoginTask(this, _emailText.getText().toString(), _passwordText.getText().toString(), _loginError).execute();
         }
 
         _loginButton.setEnabled(true);

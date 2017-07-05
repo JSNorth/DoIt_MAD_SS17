@@ -38,7 +38,7 @@ public class ContactAdapter extends ArrayAdapter<AssociatedContact> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.associated_list_entry, null);
+            convertView = inflater.inflate(R.layout.card_contact, null);
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(R.id.contact_name);
             holder.smsButton = (ImageButton) convertView.findViewById(R.id.sms_button);

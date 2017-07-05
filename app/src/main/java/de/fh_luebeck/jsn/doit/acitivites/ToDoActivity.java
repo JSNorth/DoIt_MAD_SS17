@@ -6,7 +6,6 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,15 +37,16 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
-import de.fh_luebeck.jsn.doit.asyncTasks.DeleteToDoTask;
-import de.fh_luebeck.jsn.doit.asyncTasks.CreateToDoTask;
-import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
+import de.fh_luebeck.jsn.doit.adapter.ContactAdapter;
 import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
+import de.fh_luebeck.jsn.doit.events.ContactEvents;
 import de.fh_luebeck.jsn.doit.fragments.DatePicker;
 import de.fh_luebeck.jsn.doit.fragments.TimePicker;
-import de.fh_luebeck.jsn.doit.events.ContactEvents;
-import de.fh_luebeck.jsn.doit.adapter.ContactAdapter;
+import de.fh_luebeck.jsn.doit.tasks.CreateToDoTask;
+import de.fh_luebeck.jsn.doit.tasks.DeleteToDoTask;
+import de.fh_luebeck.jsn.doit.tasks.UpdateToDoTask;
+import de.fh_luebeck.jsn.doit.util.ContactQueries;
 
 public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, ContactEvents {
 
@@ -134,7 +134,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             associatedContactDatas = new ArrayList<>();
         }
 
-        contactAdapter = new ContactAdapter(this, R.layout.associated_list_entry, associatedContactDatas, this);
+        contactAdapter = new ContactAdapter(this, R.layout.card_contact, associatedContactDatas, this);
         _listView.setAdapter(contactAdapter);
 
         if (associatedContactDatas.isEmpty()) {
@@ -281,29 +281,9 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
     private void queryRelatedContatactInformation(Uri uri) {
 
         String id = uri.getLastPathSegment();
-        String email = "";
-        String displayName = "";
-        String phoneNumer = "";
-
-        // Telefon
-        Cursor cursor = getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?",
-                new String[]{id}, null);
-        if (cursor.moveToFirst()) {
-            displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            phoneNumer = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-        }
-
-        // E-Mail
-        cursor = getContentResolver().query(
-                ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?",
-                new String[]{id}, null);
-        if (cursor.moveToFirst()) {
-            int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
-            email = cursor.getString(emailIdx);
-        }
+        String email = ContactQueries.queryMail(uri, getContentResolver());
+        String displayName = ContactQueries.queryName(uri, getContentResolver());
+        String phoneNumer = ContactQueries.queryPhone(uri, getContentResolver());
 
         AssociatedContact contact = new AssociatedContact();
         contact.setName(displayName);

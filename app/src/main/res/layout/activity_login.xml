@@ -53,7 +53,16 @@
                 android:inputType="numberPassword" />
         </android.support.design.widget.TextInputLayout>
 
-        <!-- Button -->
+        <TextView
+            android:id="@+id/login_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fehler bei der Anmeldung!"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:visibility="gone" />
+
+        <!-- Button Login -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"

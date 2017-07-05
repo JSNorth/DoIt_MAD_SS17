@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="2dp">
+    android:padding="4dp">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -11,39 +11,41 @@
         android:layout_gravity="center"
         card_view:cardCornerRadius="4dp">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/contact_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_alignParentLeft="true"
                 android:gravity="center" />
+
+            <ImageButton
+                android:id="@+id/remove_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_remove_circle_black_24dp" />
 
             <ImageButton
                 android:id="@+id/sms_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
+                android:layout_toLeftOf="@id/remove_button"
                 android:src="@drawable/ic_sms_black_24dp" />
 
             <ImageButton
                 android:id="@+id/email_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
+                android:layout_toLeftOf="@id/sms_button"
                 android:src="@drawable/ic_email_black_24dp" />
 
-            <ImageButton
-                android:id="@+id/remove_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:src="@drawable/ic_remove_circle_black_24dp" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

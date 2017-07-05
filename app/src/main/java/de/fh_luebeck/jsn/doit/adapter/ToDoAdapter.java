@@ -70,7 +70,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
                                                      int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.view_todo_card, parent, false);
+                .inflate(R.layout.card_todo, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;

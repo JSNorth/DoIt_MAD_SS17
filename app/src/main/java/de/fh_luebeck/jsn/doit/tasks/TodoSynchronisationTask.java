@@ -1,4 +1,4 @@
-package de.fh_luebeck.jsn.doit.asyncTasks;
+package de.fh_luebeck.jsn.doit.tasks;
 
 import android.content.ContentResolver;
 import android.net.Uri;

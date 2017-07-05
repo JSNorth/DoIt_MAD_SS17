@@ -1,4 +1,4 @@
-package de.fh_luebeck.jsn.doit.asyncTasks;
+package de.fh_luebeck.jsn.doit.tasks;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,12 +10,11 @@ import android.widget.Toast;
 import java.net.InetAddress;
 
 import de.fh_luebeck.jsn.doit.acitivites.OverviewActivity;
-import de.fh_luebeck.jsn.doit.util.AppConstants;
 
 import static de.fh_luebeck.jsn.doit.util.AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE;
 
 /**
- * Created by USER on 14.04.2017.
+ * Prüfung ob ein Verbindung zum Internet besteht.
  */
 
 public class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {

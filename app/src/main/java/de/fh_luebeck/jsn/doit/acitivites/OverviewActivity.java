@@ -17,8 +17,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.fh_luebeck.jsn.doit.R;
-import de.fh_luebeck.jsn.doit.asyncTasks.TodoSynchronisationTask;
-import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
+import de.fh_luebeck.jsn.doit.tasks.TodoSynchronisationTask;
+import de.fh_luebeck.jsn.doit.tasks.UpdateToDoTask;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.events.ToDoListEvents;
@@ -26,6 +26,9 @@ import de.fh_luebeck.jsn.doit.events.ToDoPersistenceEvents;
 import de.fh_luebeck.jsn.doit.util.AppConstants;
 import de.fh_luebeck.jsn.doit.adapter.ToDoAdapter;
 
+/**
+ * Übersicht über alle ToDos.
+ */
 public class OverviewActivity extends AppCompatActivity implements ToDoListEvents, ToDoPersistenceEvents {
 
     private boolean isWebAppReachable;
