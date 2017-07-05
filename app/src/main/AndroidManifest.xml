@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
     <application
         android:name="com.orm.SugarApp"
@@ -17,7 +20,7 @@
         <!-- Sugar ORM -->
         <meta-data
             android:name="DATABASE"
-            android:value="doit_local01.db" />
+            android:value="doit_local02.db" />
         <meta-data
             android:name="VERSION"
             android:value="1" />

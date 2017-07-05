@@ -1,23 +1,39 @@
 package de.fh_luebeck.jsn.doit.acitivites;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -26,12 +42,14 @@ import de.fh_luebeck.jsn.doit.R;
 import de.fh_luebeck.jsn.doit.asyncTasks.DeleteToDoTask;
 import de.fh_luebeck.jsn.doit.asyncTasks.ToDoCreateTask;
 import de.fh_luebeck.jsn.doit.asyncTasks.UpdateToDoTask;
+import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.fragments.DatePicker;
 import de.fh_luebeck.jsn.doit.fragments.TimePicker;
+import de.fh_luebeck.jsn.doit.interfaces.ContactEvents;
+import de.fh_luebeck.jsn.doit.util.ContactAdapter;
 
-public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-
+public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, ContactEvents {
 
     @InjectView(R.id.toolbar)
     Toolbar _toolbar;
@@ -54,17 +72,26 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
     @InjectView(R.id.todo_id)
     TextView _id;
 
-    @InjectView(R.id.btn_delete_todo)
-    AppCompatButton _deleteButton;
+    @InjectView(R.id.contacts_list)
+    ListView _listView;
+
+    @InjectView(R.id.no_associated_contacts)
+    TextView _noContacts;
+
+    MenuItem _deleteButton;
 
     private SimpleDateFormat dateFormat;
     private ToDo _item = null;
+    private List<AssociatedContact> associatedContacts;
+    private ContactAdapter contactAdapter;
 
     private int year;
     private int month;
     private int day;
     private int hour;
     private int minute;
+
+    private static final int CONTACT_PICKER_RESULT = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +128,22 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             _doneBox.setChecked(_item.getDone());
 
             _doneBox.setVisibility(View.VISIBLE);
-            _deleteButton.setVisibility(View.VISIBLE);
+            associatedContacts = AssociatedContact.find(AssociatedContact.class, "taskId = ?", _item.getId().toString());
         }
+
+        if (associatedContacts == null) {
+            associatedContacts = new ArrayList<>();
+        }
+
+        contactAdapter = new ContactAdapter(this, R.layout.associated_list_entry, associatedContacts, this);
+        _listView.setAdapter(contactAdapter);
+
+        if (associatedContacts.isEmpty()) {
+            _noContacts.setVisibility(View.VISIBLE);
+        }
+
     }
 
-    @OnClick(R.id.btn_submit_todo)
     public void saveToDo() {
         // Validate
 
@@ -128,7 +166,6 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
         finish();
     }
 
-    @OnClick(R.id.btn_delete_todo)
     public void deleteTodo() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -184,5 +221,141 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
         Calendar c = Calendar.getInstance();
         c.set(year, month, day, hour, minute);
         _dueDateText.setText(dateFormat.format(new Date(c.getTimeInMillis())));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.todo_menu, menu);
+        if (_item != null) {
+            _deleteButton = menu.findItem(R.id.delete);
+            _deleteButton.setVisible(true);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.delete:
+                deleteTodo();
+                return true;
+            case R.id.save:
+                saveToDo();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @OnClick(R.id.add_contact)
+    public void addContact() {
+
+        if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, 1111);
+
+        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CONTACT_PICKER_RESULT:
+                    // handle contact results
+                    Uri result = data.getData();
+                    queryRelatedContatactInformation(result);
+                    break;
+            }
+
+        } else {
+            // gracefully handle failure
+            Log.w(ToDoActivity.class.getSimpleName(), "Warning: activity result not ok");
+        }
+    }
+
+    private void queryRelatedContatactInformation(Uri uri) {
+
+        String id = uri.getLastPathSegment();
+        String email = "";
+        String displayName = "";
+        String phoneNumer = "";
+
+        // Telefon
+        Cursor cursor = getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?",
+                new String[]{id}, null);
+        if (cursor.moveToFirst()) {
+            displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            phoneNumer = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        }
+
+        // E-Mail
+        cursor = getContentResolver().query(
+                ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?",
+                new String[]{id}, null);
+        if (cursor.moveToFirst()) {
+            int emailIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+            email = cursor.getString(emailIdx);
+        }
+
+        AssociatedContact contact = new AssociatedContact();
+        contact.setName(displayName);
+        contact.setContactUri(id);
+        contact.seteMail(email);
+        contact.setMobile(phoneNumer);
+
+        associatedContacts.add(contact);
+
+        if (associatedContacts.isEmpty() == false) {
+            _noContacts.setVisibility(View.GONE);
+        }
+
+        contactAdapter.updateData(associatedContacts);
+    }
+
+    @Override
+    public void sendEMail(int position) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc822");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{associatedContacts.get(position).geteMail()});
+        if (_item != null && _item.getName() != null) {
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Bezüglich: " + _item.getName());
+        } else {
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Bezüglich einer Aufgabe");
+        }
+        if (_item != null && _item.getDescription() != null) {
+            intent.putExtra(Intent.EXTRA_TEXT, "Beschreibung: " + _item.getDescription());
+        }
+
+        startActivity(Intent.createChooser(intent, "Send Email"));
+    }
+
+    @Override
+    public void removeContact(int position) {
+        associatedContacts.remove(position);
+        contactAdapter.updateData(associatedContacts);
+
+        if (associatedContacts.isEmpty()) {
+            _noContacts.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void sendMessage(int position) {
+
+        Uri uri = Uri.parse("smsto:" + associatedContacts.get(position).getMobile());
+        Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+        if (_item != null && _item.getName() != null) {
+            it.putExtra("sms_body", _item.getName());
+        }
+        startActivity(Intent.createChooser(it, "Send SMS"));
     }
 }

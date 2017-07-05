@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/change_order"
         android:icon="@drawable/ic_swap_vert_black_24dp"
-        android:title="ChangeOrder" />
+        android:title="Sortierung"
+        app:showAsAction="ifRoom" />
 </menu>
