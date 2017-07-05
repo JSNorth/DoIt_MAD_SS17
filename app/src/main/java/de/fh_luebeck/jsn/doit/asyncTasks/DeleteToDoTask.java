@@ -3,7 +3,9 @@ package de.fh_luebeck.jsn.doit.asyncTasks;
 import android.os.AsyncTask;
 
 import java.io.IOException;
+import java.util.List;
 
+import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.webservice.ToDoWebserviceFactory;
@@ -26,6 +28,11 @@ public class DeleteToDoTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
 
         // Lokal durchführen
+        List<AssociatedContact> associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
+        for (AssociatedContact associatedContact : associatedContacts) {
+            associatedContact.delete();
+        }
+
         task.delete();
 
         // Remote

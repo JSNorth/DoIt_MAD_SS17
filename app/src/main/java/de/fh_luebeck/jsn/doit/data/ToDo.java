@@ -1,7 +1,9 @@
 package de.fh_luebeck.jsn.doit.data;
 
 import com.orm.SugarRecord;
+import com.orm.dsl.Ignore;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +18,8 @@ public class ToDo extends SugarRecord {
     Boolean done;
     Boolean favourite;
     long expiry;
+    @Ignore
+    List<String> contacts;
 
     public ToDo() {
     }
@@ -66,5 +70,18 @@ public class ToDo extends SugarRecord {
 
     public void setExpiry(long expiry) {
         this.expiry = expiry;
+    }
+
+    public void setContacts(List<AssociatedContact> contacts) {
+        this.contacts = new ArrayList<>();
+        if (contacts != null) {
+            for (AssociatedContact associatedContact : contacts) {
+                this.contacts.add(associatedContact.getContactUri());
+            }
+        }
+    }
+
+    public List<String> getContacts() {
+        return contacts;
     }
 }

@@ -58,7 +58,7 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
 
         // Datenabgleich mit der Web-App
         if (isWebAppReachable) {
-            new TodoSynchronisationTask().execute();
+            new TodoSynchronisationTask(getContentResolver()).execute();
         }
 
         // RecyclerView aufbauen
@@ -103,7 +103,7 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
             Toast.makeText(this, "Fehler ToDo konnte nicht gefunden werden", Toast.LENGTH_LONG);
         }
 
-        new UpdateToDoTask(task).execute();
+        new UpdateToDoTask(task, null).execute();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class OverviewActivity extends AppCompatActivity implements ToDoListEvent
             Toast.makeText(this, "Fehler ToDo konnte nicht gefunden werden", Toast.LENGTH_LONG);
         }
 
-        new UpdateToDoTask(task).execute();
+        new UpdateToDoTask(task, null).execute();
     }
 
     @Override

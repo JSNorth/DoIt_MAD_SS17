@@ -43,6 +43,14 @@ public class AssociatedContact extends SugarRecord {
     public AssociatedContact() {
     }
 
+    public AssociatedContact(long taskId, String contactUri, String name, String mobile, String eMail) {
+        this.taskId = taskId;
+        this.contactUri = contactUri;
+        this.name = name;
+        this.mobile = mobile;
+        this.eMail = eMail;
+    }
+
     public long getTaskId() {
         return taskId;
     }

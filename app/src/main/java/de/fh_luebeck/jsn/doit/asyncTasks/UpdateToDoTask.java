@@ -3,7 +3,9 @@ package de.fh_luebeck.jsn.doit.asyncTasks;
 import android.os.AsyncTask;
 
 import java.io.IOException;
+import java.util.List;
 
+import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.webservice.ToDoWebserviceFactory;
@@ -16,18 +18,38 @@ import retrofit2.Response;
 public class UpdateToDoTask extends AsyncTask<Void, Void, Void> {
 
     private ToDo task;
+    private List<AssociatedContact> associatedContacts;
 
-    public UpdateToDoTask(ToDo task) {
+    public UpdateToDoTask(ToDo task, List<AssociatedContact> associatedContacts) {
         this.task = task;
+        this.associatedContacts = associatedContacts;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
 
         // Lokal speichern
+
+        // Bei einem Update aus der Overview ist null erlaubt.
+        if (associatedContacts == null) {
+            associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
+        }
+
+        List<AssociatedContact> oldContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", task.getId().toString());
+        if (oldContacts != null) {
+            for (AssociatedContact associatedContact : oldContacts) {
+                associatedContact.delete();
+            }
+        }
+
+        for (AssociatedContact associatedContact : associatedContacts) {
+            associatedContact.setTaskId(task.getId());
+            associatedContact.save();
+        }
         task.save();
 
         try {
+            task.setContacts(associatedContacts);
             Response resp = ToDoWebserviceFactory.getToDoWebserice().updateTodo(task.getId(), task).execute();
             if (resp.isSuccessful() == false) {
                 EventHandler.webServiceError(resp);

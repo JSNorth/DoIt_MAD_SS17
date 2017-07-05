@@ -3,7 +3,9 @@ package de.fh_luebeck.jsn.doit.asyncTasks;
 import android.os.AsyncTask;
 
 import java.io.IOException;
+import java.util.List;
 
+import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
 import de.fh_luebeck.jsn.doit.interfaces.ToDoPersistenceEvents;
@@ -17,17 +19,24 @@ import retrofit2.Response;
 public class ToDoCreateTask extends AsyncTask<Void, Void, Void> {
 
     private ToDo item;
+    private List<AssociatedContact> associatedContacts;
 
-    public ToDoCreateTask(ToDo item) {
+    public ToDoCreateTask(ToDo item, List<AssociatedContact> associatedContacts) {
         this.item = item;
+        this.associatedContacts = associatedContacts;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
 
         item.save();
+        for (AssociatedContact associatedContact : associatedContacts) {
+            associatedContact.setTaskId(item.getId());
+            associatedContact.save();
+        }
 
         try {
+            item.setContacts(associatedContacts);
             Response response = ToDoWebserviceFactory.getToDoWebserice().createTodo(item).execute();
 
             if (response.isSuccessful() == false) {

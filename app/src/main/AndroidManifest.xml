@@ -20,7 +20,7 @@
         <!-- Sugar ORM -->
         <meta-data
             android:name="DATABASE"
-            android:value="doit_local02.db" />
+            android:value="doit_local03.db" />
         <meta-data
             android:name="VERSION"
             android:value="1" />

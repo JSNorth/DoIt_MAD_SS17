@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -128,7 +127,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             _doneBox.setChecked(_item.getDone());
 
             _doneBox.setVisibility(View.VISIBLE);
-            associatedContacts = AssociatedContact.find(AssociatedContact.class, "taskId = ?", _item.getId().toString());
+            associatedContacts = AssociatedContact.find(AssociatedContact.class, "task_id = ?", _item.getId().toString());
         }
 
         if (associatedContacts == null) {
@@ -152,7 +151,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             // Neues Objekt anlegen
             _item = new ToDo(_nameText.getText().toString(), _descriptionText.getText().toString(), false, _favoriteBox.isChecked(), getDueDate());
 
-            new ToDoCreateTask(_item).execute();
+            new ToDoCreateTask(_item, associatedContacts).execute();
 
         } else {
             _item.setDescription(_descriptionText.getText().toString());
@@ -160,7 +159,7 @@ public class ToDoActivity extends AppCompatActivity implements DatePickerDialog.
             _item.setFavourite(_favoriteBox.isChecked());
             _item.setExpiry(getDueDate().getTime());
 
-            new UpdateToDoTask(_item).execute();
+            new UpdateToDoTask(_item, associatedContacts).execute();
         }
 
         finish();
