@@ -10,6 +10,7 @@ import java.util.List;
 import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
+import de.fh_luebeck.jsn.doit.util.AppVariables;
 import de.fh_luebeck.jsn.doit.util.ContactQueries;
 import de.fh_luebeck.jsn.doit.webservice.ToDoWebserviceFactory;
 import retrofit2.Response;
@@ -28,6 +29,11 @@ public class TodoSynchronisationTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     public Void doInBackground(Void... params) {
+
+        if (AppVariables.isWebAppReachable() == false) {
+            // Wenn die Webanwendung nicht verfügbar ist, arbeiten wir nur lokal
+            return null;
+        }
 
         // Liegen lokale ToDos vor, werden die Webservice ToDos gelöscht und die lokalen ToDos übernommen.
         if (ToDo.first(ToDo.class) != null) {

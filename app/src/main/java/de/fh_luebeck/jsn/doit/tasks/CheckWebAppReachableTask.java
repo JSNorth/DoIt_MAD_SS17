@@ -10,6 +10,8 @@ import android.widget.Toast;
 import java.net.InetAddress;
 
 import de.fh_luebeck.jsn.doit.acitivites.OverviewActivity;
+import de.fh_luebeck.jsn.doit.util.AppConstants;
+import de.fh_luebeck.jsn.doit.util.AppVariables;
 
 import static de.fh_luebeck.jsn.doit.util.AppConstants.INTENT_EXTRA_WEB_APP_AVAILABLE;
 
@@ -53,8 +55,10 @@ public class CheckWebAppReachableTask extends AsyncTask<Void, Void, Boolean> {
         }
 
         if (success) {
+            AppVariables.setIsWebAppReachable(true);
             Toast.makeText(activity, "Verbindung vorhanden, bitte anmelden", Toast.LENGTH_LONG).show();
         } else {
+            AppVariables.setIsWebAppReachable(false);
             Toast.makeText(activity, "Verbindung nicht vorhanden", Toast.LENGTH_LONG).show();
 
             // Direkter Wechsel in die Übersicht

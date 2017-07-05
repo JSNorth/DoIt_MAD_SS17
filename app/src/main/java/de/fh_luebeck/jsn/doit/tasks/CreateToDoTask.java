@@ -8,6 +8,7 @@ import java.util.List;
 import de.fh_luebeck.jsn.doit.data.AssociatedContact;
 import de.fh_luebeck.jsn.doit.data.ToDo;
 import de.fh_luebeck.jsn.doit.events.EventHandler;
+import de.fh_luebeck.jsn.doit.util.AppVariables;
 import de.fh_luebeck.jsn.doit.webservice.ToDoWebserviceFactory;
 import retrofit2.Response;
 
@@ -28,24 +29,28 @@ public class CreateToDoTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
 
+        // Lokal
         item.save();
         for (AssociatedContact associatedContactData : associatedContactDatas) {
             associatedContactData.setTaskId(item.getId());
             associatedContactData.save();
         }
 
-        try {
-            item.setContacts(associatedContactDatas);
-            Response response = ToDoWebserviceFactory.getToDoWebserice().createTodo(item).execute();
+        // Wenn Web verfügbar, die Remote-Operationen durchführen
+        if (AppVariables.isWebAppReachable() == false) {
+            try {
+                item.setContacts(associatedContactDatas);
+                Response response = ToDoWebserviceFactory.getToDoWebserice().createTodo(item).execute();
 
-            if (response.isSuccessful() == false) {
-                EventHandler.webServiceError(response);
-                return null;
+                if (response.isSuccessful() == false) {
+                    EventHandler.webServiceError(response);
+                    return null;
+                }
+
+                EventHandler.dataChangedSignal();
+            } catch (IOException e) {
+                EventHandler.webServiceException(e);
             }
-
-            EventHandler.dataChangedSignal();
-        } catch (IOException e) {
-            EventHandler.webServiceException(e);
         }
 
         return null;
